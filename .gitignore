@@ -1,6 +1,7 @@
 .renviron
 config.js
-.csv
+*.csv
+*.xlsx
 
 ### macOS ###
 # General

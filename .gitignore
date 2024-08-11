@@ -2,6 +2,7 @@
 config.js
 *.csv
 *.xlsx
+.png
 
 ### macOS ###
 # General

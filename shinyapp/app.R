@@ -1,38 +1,41 @@
 library(shiny)
 library(bslib)
+library(dplyr)
+library(ggplot2)
 
-# Define UI for app that draws a histogram ----
+Oriel2526 <- read.csv("ExpandedOrielDataFor2526.csv")
+Oriel2425 <- read.csv("ExpandedOrielDataFor2425.csv")
+Oriel2324 <- read.csv("ExpandedOrielDataFor2324.csv")
+
 ui <- page_sidebar(
-  title = "Hello Shiny!",
+  # App title ----
+  title = "Trainee Pharmacist Salary Distribution",
+  # Sidebar panel for inputs ----
   sidebar = sidebar(
-    
+    # Input: Slider for the number of bins ----
     sliderInput(
       inputId = "bins",
       label = "Number of bins:",
       min = 1,
       max = 50,
-      value = 30
+      value = 10
     )
   ),
   # Output: Histogram ----
   plotOutput(outputId = "distPlot")
 )
-
-
-# Define server logic required to draw a histogram ----
 server <- function(input, output) {
-
   output$distPlot <- renderPlot({
-    
-    x    <- faithful$waiting
+    x <- Oriel2526$Salary
     bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    hist(x, breaks = bins, col = "#007bc2", border = "white",
-         xlab = "Waiting time to next eruption (in mins)",
-         main = "Histogram of waiting times")
-    
+
+    hist(x,
+      breaks = bins, col = "#007bc2", border = "white",
+      xlab = "Salary (£)",
+      main = "Salary distribution for 2024-25 training year of Salary"
+    )
   })
-  
 }
+
 
 shinyApp(ui = ui, server = server)

@@ -4,6 +4,8 @@ library(bslib)
 library(dplyr)
 library(plotly)
 library(ggplot2)
+library(shinylive)
+library(httpuv)
 
 # https://shinyapps.dreamrs.fr/shinyWidgets/ for more info on shinyWidgets
 
@@ -53,6 +55,7 @@ server <- function(input, output) {
         title = "Trainee Pharmacist Salary Distribution",
         x = "Salary", y = "Count"
       ) +
+      geom_vline(xintercept = 25600, color = "red") +
       theme_minimal()
 
     ggplotly(p)
@@ -60,3 +63,4 @@ server <- function(input, output) {
 }
 
 shinyApp(ui = ui, server = server)
+httpuv::runStaticServer("site/")

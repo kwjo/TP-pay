@@ -4,8 +4,7 @@ library(bslib)
 library(dplyr)
 library(plotly)
 library(ggplot2)
-library(shinylive)
-library(httpuv)
+library(rsconnect)
 
 # https://shinyapps.dreamrs.fr/shinyWidgets/ for more info on shinyWidgets
 
@@ -63,4 +62,3 @@ server <- function(input, output) {
 }
 
 shinyApp(ui = ui, server = server)
-httpuv::runStaticServer("site/")

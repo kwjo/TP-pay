@@ -5,6 +5,8 @@ library(dplyr)
 library(plotly)
 library(ggplot2)
 
+# https://shinyapps.dreamrs.fr/shinyWidgets/ for more info on shinyWidgets
+
 # Load CSV files once
 Oriel2526 <- read.csv("ExpandedOrielDataFor2526.csv")
 Oriel2425 <- read.csv("ExpandedOrielDataFor2425.csv")

@@ -13,12 +13,32 @@ Oriel2526 <- read.csv("ExpandedOrielDataFor2526.csv")
 Oriel2425 <- read.csv("ExpandedOrielDataFor2425.csv")
 Oriel2324 <- read.csv("ExpandedOrielDataFor2324.csv")
 
+# Latest data to be displayed by default
+DataBeingDisplayed <- Oriel2526
+
 ui <- page_sidebar(
   title = "Trainee Pharmacist Salary Distribution",
+  pickerInput(
+    inputId = "SelectYear",
+    label = "Which year?",
+    choices = paste("Badge", c(
+      "2025-26", "2024-25", "2023-24"
+    )),
+    multiple = FALSE,
+    choicesOpt = list(
+      content = sprintf(
+        "<span class='label label-%s'>%s</span>",
+        c("2025-26", "2024-25", "2023-24"),
+        paste("Training ", c(
+          "2025-26", "2024-25", "2023-24"
+        ))
+      )
+    )
+  ),
   sidebar = sidebar(
     sliderInput(
-      inputId = "bins",
-      label = "Number of bins:",
+      inputId = "Bins",
+      label = "Number of Bins:",
       min = 1,
       max = 50,
       value = 10
@@ -35,21 +55,30 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output) {
-  filteredData <- reactive({
+  PickYear <- reactive({
+    if (input$SelectYear == "2025-26") {
+      DataBeingDisplayed <- Oriel2526
+    } else if (input$SelectYear == "2024-25") {
+      DataBeingDisplayed <- Oriel2425
+    } else {
+      DataBeingDisplayed <- Oriel2324
+    }
+  })
+  FilteredData <- reactive({
     if (input$EmployerType == "Primary care only") {
-      Oriel2526 %>%
+      DataBeingDisplayed %>%
         filter(EmployerType == "Primary Care")
     } else if (input$EmployerType == "Hospital only") {
-      Oriel2526 %>%
+      DataBeingDisplayed %>%
         filter(EmployerType == "Hospital")
     } else {
-      Oriel2526
+      DataBeingDisplayed
     }
   })
 
   output$distPlot <- renderPlotly({
-    p <- ggplot(filteredData(), aes(x = Salary)) +
-      geom_histogram(bins = input$bins, fill = "lightblue", color = "black") +
+    PlotDisplayed <- ggplot(FilteredData(), aes(x = Salary)) +
+      geom_histogram(Bins = input$Bins, fill = "lightblue", color = "black") +
       labs(
         title = "Trainee Pharmacist Salary Distribution",
         x = "Salary", y = "Count"
@@ -57,8 +86,10 @@ server <- function(input, output) {
       geom_vline(xintercept = 25600, color = "red") +
       theme_minimal()
 
-    ggplotly(p)
+    ggplotly(PlotDisplayed)
   })
 }
+
+
 
 shinyApp(ui = ui, server = server)

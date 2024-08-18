@@ -21,19 +21,10 @@ ui <- page_sidebar(
   pickerInput(
     inputId = "SelectYear",
     label = "Which year?",
-    choices = paste("Badge", c(
+    choices = c(
       "2025-26", "2024-25", "2023-24"
-    )),
-    multiple = FALSE,
-    choicesOpt = list(
-      content = sprintf(
-        "<span class='label label-%s'>%s</span>",
-        c("2025-26", "2024-25", "2023-24"),
-        paste("Training ", c(
-          "2025-26", "2024-25", "2023-24"
-        ))
-      )
-    )
+    ),
+    multiple = FALSE
   ),
   sidebar = sidebar(
     sliderInput(
@@ -58,10 +49,13 @@ server <- function(input, output) {
   PickYear <- reactive({
     if (input$SelectYear == "2025-26") {
       DataBeingDisplayed <- Oriel2526
+      return(Oriel2526)
     } else if (input$SelectYear == "2024-25") {
       DataBeingDisplayed <- Oriel2425
+      return(Oriel2425)
     } else {
       DataBeingDisplayed <- Oriel2324
+      return(Oriel2324)
     }
   })
   FilteredData <- reactive({
@@ -77,8 +71,9 @@ server <- function(input, output) {
   })
 
   output$distPlot <- renderPlotly({
-    PlotDisplayed <- ggplot(FilteredData(), aes(x = Salary)) +
-      geom_histogram(Bins = input$Bins, fill = "lightblue", color = "black") +
+    DataBeingDisplayed <- PickYear()
+    PlotDisplayed <- ggplot(DataBeingDisplayed, aes(x = Salary)) +
+      geom_histogram(bins = input$Bins, fill = "lightblue", color = "black") +
       labs(
         title = "Trainee Pharmacist Salary Distribution",
         x = "Salary", y = "Count"

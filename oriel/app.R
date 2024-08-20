@@ -22,7 +22,7 @@ ui <- page_sidebar(
     inputId = "SelectYear",
     label = "Which year?",
     choices = c(
-      "2025-26", "2024-25", "2023-24"
+      "202526", "202425", "202324"
     ),
     multiple = FALSE
   ),
@@ -32,7 +32,7 @@ ui <- page_sidebar(
       label = "Number of Bins:",
       min = 1,
       max = 50,
-      value = 10
+      value = 30
     ),
     awesomeRadio(
       inputId = "EmployerType",
@@ -45,12 +45,14 @@ ui <- page_sidebar(
   plotlyOutput(outputId = "distPlot")
 )
 
+
+
 server <- function(input, output) {
   PickYear <- reactive({
-    if (input$SelectYear == "2025-26") {
+    if (input$SelectYear == "202526") {
       DataBeingDisplayed <- Oriel2526
       return(Oriel2526)
-    } else if (input$SelectYear == "2024-25") {
+    } else if (input$SelectYear == "202425") {
       DataBeingDisplayed <- Oriel2425
       return(Oriel2425)
     } else {
@@ -58,20 +60,23 @@ server <- function(input, output) {
       return(Oriel2324)
     }
   })
+
+
+
   FilteredData <- reactive({
+    DataBeingDisplayed <- PickYear()
+
     if (input$EmployerType == "Primary care only") {
-      DataBeingDisplayed %>%
-        filter(EmployerType == "Primary Care")
+      return(DataBeingDisplayed %>% filter(EmployerType == "Primary Care"))
     } else if (input$EmployerType == "Hospital only") {
-      DataBeingDisplayed %>%
-        filter(EmployerType == "Hospital")
+      return(DataBeingDisplayed %>% filter(EmployerType == "Hospital"))
     } else {
-      DataBeingDisplayed
+      return(DataBeingDisplayed) # Return all data for "All EmployerTypes"
     }
   })
 
   output$distPlot <- renderPlotly({
-    DataBeingDisplayed <- PickYear()
+    DataBeingDisplayed <- FilteredData()
     PlotDisplayed <- ggplot(DataBeingDisplayed, aes(x = Salary)) +
       geom_histogram(bins = input$Bins, fill = "lightblue", color = "black") +
       labs(

@@ -22,7 +22,7 @@ ui <- page_sidebar(
     inputId = "SelectYear",
     label = "Which year?",
     choices = c(
-      "202526", "202425", "202324"
+      "2025-26", "2024-25", "2023-24"
     ),
     multiple = FALSE
   ),
@@ -49,10 +49,10 @@ ui <- page_sidebar(
 
 server <- function(input, output) {
   PickYear <- reactive({
-    if (input$SelectYear == "202526") {
+    if (input$SelectYear == "2025-26") {
       DataBeingDisplayed <- Oriel2526
       return(Oriel2526)
-    } else if (input$SelectYear == "202425") {
+    } else if (input$SelectYear == "2024-25") {
       DataBeingDisplayed <- Oriel2425
       return(Oriel2425)
     } else {
@@ -73,6 +73,21 @@ server <- function(input, output) {
     } else {
       return(DataBeingDisplayed) # Return all data for "All EmployerTypes"
     }
+  })
+
+  output$distPlot <- renderPlotly({
+    DataBeingDisplayed <- FilteredData()
+    PlotDisplayed <- ggplot(DataBeingDisplayed, aes(x = Salary)) +
+      geom_histogram(bins = input$Bins, fill = "lightblue", color = "black") +
+      labs(
+        title = "Trainee Pharmacist Salary Distribution",
+        x = "Salary", y = "Count"
+      ) +
+      geom_vline(xintercept = 25600, color = "red") +
+      theme_minimal()
+
+
+    ggplotly(PlotDisplayed)
   })
 
   output$distPlot <- renderPlotly({

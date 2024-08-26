@@ -27,6 +27,12 @@ ui <- page_sidebar(
     multiple = FALSE
   ),
   sidebar = sidebar(
+    awesomeRadio(
+      inputId = "PlotOfInterest",
+      label = "Plot of interest",
+      choices = c("Salary", "Hourly wage", "Working hours", "Visa sponsorship"),
+      selected = "Salary",
+    ),
     sliderInput(
       inputId = "Bins",
       label = "Number of Bins:",
@@ -75,34 +81,20 @@ server <- function(input, output) {
     }
   })
 
-  output$distPlot <- renderPlotly({
-    DataBeingDisplayed <- FilteredData()
-    PlotDisplayed <- ggplot(DataBeingDisplayed, aes(x = Salary)) +
-      geom_histogram(bins = input$Bins, fill = "lightblue", color = "black") +
-      labs(
-        title = "Trainee Pharmacist Salary Distribution",
-        x = "Salary", y = "Count"
-      ) +
-      geom_vline(xintercept = 25600, color = "red") +
-      theme_minimal()
+  output$distPlot <-
+    renderPlotly({
+      DataBeingDisplayed <- FilteredData()
+      PlotDisplayed <- ggplot(DataBeingDisplayed, aes(x = Salary)) +
+        geom_histogram(bins = input$Bins, fill = "lightblue", color = "black") +
+        labs(
+          title = "Trainee Pharmacist Salary Distribution",
+          x = "Salary", y = "Count"
+        ) +
+        geom_vline(xintercept = 25600, color = "red") +
+        theme_minimal()
 
-
-    ggplotly(PlotDisplayed)
-  })
-
-  output$distPlot <- renderPlotly({
-    DataBeingDisplayed <- FilteredData()
-    PlotDisplayed <- ggplot(DataBeingDisplayed, aes(x = Salary)) +
-      geom_histogram(bins = input$Bins, fill = "lightblue", color = "black") +
-      labs(
-        title = "Trainee Pharmacist Salary Distribution",
-        x = "Salary", y = "Count"
-      ) +
-      geom_vline(xintercept = 25600, color = "red") +
-      theme_minimal()
-
-    ggplotly(PlotDisplayed)
-  })
+      ggplotly(PlotDisplayed)
+    })
 }
 
 
